@@ -1,34 +1,36 @@
-import React, { Component } from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types';
 import css from '../style/ContactForm.module.css';
-export class ContactForm extends Component {
-  state = {
-    name: '',
-    number: '',
-  };
+export function ContactForm({ onSubmit }) {
+  const [name, setName] = useState('')
+  const [number, setNumber] = useState('')
 
-  contactChange = e => {
-    const { name, value } = e.target;
-    this.setState({ [name]: value });
-  };
+  const contactsChange = event => { 
+    switch (event.target.name) {
+      case 'name':
+        setName(event.target.value);
+        break;
+      case 'number':
+        setNumber(event.target.value);
+        break;
+      
+      default:return
+    }
+  }
 
-  contactSubmit = e => {
+  const contactSubmit = e => {
     e.preventDefault();
     const form = e.currentTarget;
-    this.props.onSubmit(this.state);
+    onSubmit({name, number});
     form.reset();
 
-    this.setState({
-      name: '',
-      number: '',
-    });
+    setName('');
+    setNumber('');
+    
   };
-
-  render() {
-    const { name, number } = this.state;
-
+  
     return (
-      <form className={css.contactForm} onSubmit={this.contactSubmit}>
+      <form className={css.contactForm} onSubmit={contactSubmit}>
         <label className={css.label}>
           Name
           <input
@@ -39,7 +41,7 @@ export class ContactForm extends Component {
             required
             placeholder="Enter name"
             value={name}
-            onChange={this.contactChange}
+            onChange={contactsChange}
           />
         </label>
 
@@ -53,14 +55,14 @@ export class ContactForm extends Component {
             required
             placeholder="Enter phone number"
             value={number}
-            onChange={this.contactChange}
+            onChange={contactsChange}
           />
         </label>
 
         <button type="submit">Add contact</button>
       </form>
     );
-  }
+  
 }
 
 ContactForm.propTypes = {
